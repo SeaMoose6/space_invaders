@@ -36,5 +36,39 @@ class Enemy():
     pass
 
 
-class Missile():
-    pass
+class Missile(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.velo = 2
+
+        self.image = pygame.Surface((MISSILE_WIDTH, MISSILE_HEIGHT))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+        pygame.draw.rect(self.image, WHITE, [self.rect.x, self.rect.y,
+                         MISSILE_WIDTH, MISSILE_HEIGHT])
+
+    def update(self):
+        self.rect.y -= self.velo
+
+        if self.rect.bottom <= 0:
+            self.kill()
+
+class Blocks(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+
+        self.image = pygame.Surface((MISSILE_WIDTH, MISSILE_HEIGHT))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+        pygame.draw.rect(self.image, WHITE, [self.rect.x, self.rect.y,
+                         BLOCK_WIDTH, BLOCK_HEIGHT])
+
+
