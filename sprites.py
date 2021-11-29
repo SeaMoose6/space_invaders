@@ -40,7 +40,7 @@ class Enemy(pygame.sprite.Sprite):
         self.color = color
         self.image = pygame.image.load(self.color)
         self.rect = self.image.get_rect()
-        self.rect.center = (DISPLAY_WIDTH // 15) * self.x_pos, self.rect.height - y_pos
+        self.rect.center = (DISPLAY_WIDTH // 15) * self.x_pos, self.rect.height + y_pos
         self.y_velo = 0
         self.x_velo = 2
 
@@ -50,10 +50,6 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.right >= DISPLAY_WIDTH or self.rect.left <= 0:
             self.x_velo *= -1
             self.rect.y += self.rect.height
-
-
-
-
 
 class Missile(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -76,7 +72,7 @@ class Missile(pygame.sprite.Sprite):
         if self.rect.bottom <= 0:
             self.kill()
 
-class Blocks(pygame.sprite.Sprite):
+class Block(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
@@ -87,7 +83,26 @@ class Blocks(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        pygame.draw.rect(self.image, WHITE, [self.rect.x, self.rect.y,
+        pygame.draw.rect(self.image, ORANGE, [self.rect.x, self.rect.y,
                          BLOCK_WIDTH, BLOCK_HEIGHT])
 
+class Bomb(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.x = x
+        self.y = y
+        self.velo = 2
 
+        self.image = pygame.Surface((MISSILE_WIDTH, MISSILE_HEIGHT))
+        self.image.fill(WHITE)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+        pygame.draw.rect(self.image, WHITE, [self.rect.x, self.rect.y,
+                         MISSILE_WIDTH, MISSILE_HEIGHT])
+
+    def update(self):
+        self.rect.y += self.velo
+
+        if self.rect.top >= 1000:
+             self.kill()

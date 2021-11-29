@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import Player, Enemy, Missile
+from sprites import Player, Enemy, Missile, Bomb, Block
 
 # functions
 
@@ -23,6 +23,7 @@ all_sprites = pygame.sprite.Group()
 missile_group = pygame.sprite.Group()
 block_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
+bomb_group = pygame.sprite.Group()
 
 player = Player("assets/player.png")
 player_group.add(player)
@@ -31,11 +32,11 @@ all_sprites.add(player)
 
 for num in range(1, 55):
     if num <= 11:
-        enemy = Enemy(num, 0, RED_ALIEN)
+        enemy = Enemy(num, 200, RED_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 10 < num <= 21:
-        enemy = Enemy(num-10, 50, RED_ALIEN)
+        enemy = Enemy(num-10, 150, RED_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 20 < num <= 31:
@@ -43,11 +44,11 @@ for num in range(1, 55):
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 30 < num <= 41:
-        enemy = Enemy(num-30, 150, YELLOW_ALIEN)
+        enemy = Enemy(num-30, 50, YELLOW_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 40 < num <= 51:
-        enemy = Enemy(num-40, 200, GREEN_ALIEN)
+        enemy = Enemy(num-40, 0, GREEN_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
 
@@ -77,18 +78,34 @@ while running:
 
     screen.fill(BLACK)
 
-    for string in LAYOUT:
-        for val in string:
-            if val == 0:
+    shooting_enemy = list(enemy_group)[random.randint(0, len(enemy_group)-1)]
+    bomb = Bomb(shooting_enemy.rect.x, shooting_enemy.rect.y)
+
+    if len(bomb_group) < 10:
+        bomb_group.add(bomb)
+        all_sprites.add(bomb)
+
+    for num in range(len(LAYOUT)):
+        for val in range(len(LAYOUT[num])):
+            if LAYOUT[num][val] == "0":
                 SPACE_COUNTER += 1
-            elif val == 1:
-                pass
+                if SPACE_COUNTER >= 50:
+                    SPACE_COUNTER = 0
+                    ROW_COUNTER += 1
+            elif LAYOUT[num][val] == "1":
+                print("found", SPACE_COUNTER, ROW_COUNTER)
+                SPACE_COUNTER += 1
+                block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER)
+                block_group.add(block)
+                all_sprites.add(block)
 
 
     #print(missile_group)
     enemy_group.draw(screen)
     missile_group.draw(screen)
     player_group.draw(screen)
+    bomb_group.draw(screen)
+    block_group.draw(screen)
     all_sprites.update()
 
 
