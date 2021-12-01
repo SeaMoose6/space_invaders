@@ -4,10 +4,6 @@ import random
 from settings import *
 from sprites import Player, Enemy, Missile, Bomb, Block
 
-# functions
-
-
-
 pygame.init()
 
 screen = pygame.display.set_mode(SIZE)
@@ -52,7 +48,21 @@ for num in range(1, 55):
         enemy_group.add(enemy)
         all_sprites.add(enemy)
 
-#enemy = Enemy(2, GREEN_ALIEN)
+
+    for num in range(len(LAYOUT)):
+        for val in range(len(LAYOUT[num])):
+            if LAYOUT[num][val] == "0":
+                SPACE_COUNTER += 1
+                if SPACE_COUNTER == 50:
+                    SPACE_COUNTER = 0
+                    ROW_COUNTER += 1
+            elif LAYOUT[num][val] == "1":
+                SPACE_COUNTER += 1
+                block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER, screen)
+                block_group.add(block)
+                all_sprites.add(block)
+
+
 enemy_group.add(enemy)
 all_sprites.add(enemy)
 
@@ -81,26 +91,18 @@ while running:
     shooting_enemy = list(enemy_group)[random.randint(0, len(enemy_group)-1)]
     bomb = Bomb(shooting_enemy.rect.x, shooting_enemy.rect.y)
 
+    pygame.sprite.groupcollide(bomb_group, block_group, True, True)
+    pygame.sprite.groupcollide(missile_group, block_group, True, True)
+    #print(pygame.sprite.spritecollide(player, bomb_group, True))
+
+    if str(pygame.sprite.spritecollide(player, bomb_group, True)) == '[<Bomb Sprite(in 0 groups)>]':
+        LIFE_COUNTER -= 1
+
     if len(bomb_group) < 10:
         bomb_group.add(bomb)
         all_sprites.add(bomb)
 
-    for num in range(len(LAYOUT)):
-        for val in range(len(LAYOUT[num])):
-            if LAYOUT[num][val] == "0":
-                SPACE_COUNTER += 1
-                if SPACE_COUNTER >= 50:
-                    SPACE_COUNTER = 0
-                    ROW_COUNTER += 1
-            elif LAYOUT[num][val] == "1":
-                print("found", SPACE_COUNTER, ROW_COUNTER)
-                SPACE_COUNTER += 1
-                block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER)
-                block_group.add(block)
-                all_sprites.add(block)
 
-
-    #print(missile_group)
     enemy_group.draw(screen)
     missile_group.draw(screen)
     player_group.draw(screen)

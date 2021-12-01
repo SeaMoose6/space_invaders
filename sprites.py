@@ -3,6 +3,16 @@ import math
 import random
 from settings import *
 
+class Life(pygame.sprite.Sprite):
+    def __init__(self, x_pos, y_pos):
+        pygame.sprite.Sprite.__init__(self)
+        self.x_pos = x_pos
+        self.y_pos = y_pos
+
+        self.image = pygame.image.load("assets/player.png")
+        self.rect = self.image.get_rect()
+        self.rect.center = self.x_pos, self.y_pos
+
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_path):
         pygame.sprite.Sprite.__init__(self)
@@ -33,6 +43,10 @@ class Player(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
+
+    y_level = 0
+    change_x = 1
+
     def __init__(self, x_pos, y_pos, color):
         pygame.sprite.Sprite.__init__(self)
         self.x_pos = x_pos
@@ -45,11 +59,11 @@ class Enemy(pygame.sprite.Sprite):
         self.x_velo = 2
 
     def update(self):
-        self.rect.y += self.y_velo
-        self.rect.x += self.x_velo
+        self.rect.x += Enemy.change_x
         if self.rect.right >= DISPLAY_WIDTH or self.rect.left <= 0:
-            self.x_velo *= -1
-            self.rect.y += self.rect.height
+            Enemy.y_level += 1
+            Enemy.change_x *= -1
+        self.rect.y = (Enemy.y_level * self.rect.height + self.y_pos)
 
 class Missile(pygame.sprite.Sprite):
     def __init__(self, x, y):
@@ -73,17 +87,18 @@ class Missile(pygame.sprite.Sprite):
             self.kill()
 
 class Block(pygame.sprite.Sprite):
-    def __init__(self, x, y):
+    def __init__(self, x, y, display):
         pygame.sprite.Sprite.__init__(self)
         self.x = x
         self.y = y
+        self.display = display
 
-        self.image = pygame.Surface((MISSILE_WIDTH, MISSILE_HEIGHT))
-        self.image.fill(WHITE)
+        self.image = pygame.Surface((BLOCK_WIDTH, BLOCK_HEIGHT))
+        self.image.fill(ORANGE)
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
-        pygame.draw.rect(self.image, ORANGE, [self.rect.x, self.rect.y,
+        pygame.draw.rect(self.display, ORANGE, [self.rect.x, self.rect.y,
                          BLOCK_WIDTH, BLOCK_HEIGHT])
 
 class Bomb(pygame.sprite.Sprite):
