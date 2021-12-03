@@ -11,7 +11,7 @@ WHITE = (255, 255, 255)
 GREEN = (0, 255, 0)
 ORANGE = (255, 77, 0)
 
-#FONT = pygame.Font("unifont.ttf", 25)
+FONT = pygame.font.SysFont("assets/unifont.ttf", 50)
 PI = math.pi
 
 DISPLAY_HEIGHT = 1000

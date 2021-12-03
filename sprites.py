@@ -3,6 +3,15 @@ import math
 import random
 from settings import *
 
+class Score():
+    def __init__(self, font, display):
+        self.font = font
+        self.display = display
+
+    def draw_score(self):
+        text = self.font.render(f"Lives = {LIFE_COUNTER}", True, WHITE)
+        self.display.blit(text, (50, 25))
+
 class Life(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos):
         pygame.sprite.Sprite.__init__(self)
@@ -12,6 +21,8 @@ class Life(pygame.sprite.Sprite):
         self.image = pygame.image.load("assets/player.png")
         self.rect = self.image.get_rect()
         self.rect.center = self.x_pos, self.y_pos
+
+
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, image_path):

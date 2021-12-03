@@ -2,7 +2,7 @@ import pygame
 import math
 import random
 from settings import *
-from sprites import Player, Enemy, Missile, Bomb, Block
+from sprites import Player, Enemy, Missile, Bomb, Block, Life, Score
 
 pygame.init()
 
@@ -19,11 +19,13 @@ all_sprites = pygame.sprite.Group()
 missile_group = pygame.sprite.Group()
 block_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
+life_group = pygame.sprite.Group()
 bomb_group = pygame.sprite.Group()
 
 player = Player("assets/player.png")
 player_group.add(player)
 all_sprites.add(player)
+
 
 
 for num in range(1, 55):
@@ -65,6 +67,19 @@ for num in range(1, 55):
 
 enemy_group.add(enemy)
 all_sprites.add(enemy)
+life_1 = Life(1*75, 980)
+life_2 = Life(2*75, 980)
+life_3 = Life(3*75, 980)
+life_group.add(life_1)
+life_group.add(life_2)
+life_group.add(life_3)
+
+
+
+# for num in range(LIFE_COUNTER):
+#     life = Life(num*75+30, 980)
+#     life_group.add(life)
+#     all_sprites.add(life)
 
 clock = pygame.time.Clock()
 
@@ -82,6 +97,8 @@ while running:
                 all_sprites.add(missile)
                 shoot_sound.play()
 
+
+
     enemy_kills = pygame.sprite.groupcollide(missile_group, enemy_group, True, True)
     if enemy_kills:
         enemy_kill.play()
@@ -93,21 +110,36 @@ while running:
 
     pygame.sprite.groupcollide(bomb_group, block_group, True, True)
     pygame.sprite.groupcollide(missile_group, block_group, True, True)
-    #print(pygame.sprite.spritecollide(player, bomb_group, True))
 
-    if str(pygame.sprite.spritecollide(player, bomb_group, True)) == '[<Bomb Sprite(in 0 groups)>]':
+    #print(pygame.sprite.spritecollide(player, bomb_group, True))
+    life_kills = pygame.sprite.spritecollide(player, bomb_group, True)
+    if life_kills:
         LIFE_COUNTER -= 1
+        if LIFE_COUNTER == 2:
+            life_3.kill()
+        elif LIFE_COUNTER == 1:
+            life_2.kill()
+        elif LIFE_COUNTER == 0:
+            life_1.kill()
+
+    score = Score(FONT, screen)
+
+    # if str(pygame.sprite.spritecollide(player, bomb_group, True)) == '[<Bomb Sprite(in 0 groups)>]':
+    #     LIFE_COUNTER -= 1
+    #     life.kill()
 
     if len(bomb_group) < 10:
         bomb_group.add(bomb)
         all_sprites.add(bomb)
 
+    score.draw_score()
 
     enemy_group.draw(screen)
     missile_group.draw(screen)
     player_group.draw(screen)
     bomb_group.draw(screen)
     block_group.draw(screen)
+    life_group.draw(screen)
     all_sprites.update()
 
 
