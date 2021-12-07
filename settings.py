@@ -12,6 +12,7 @@ GREEN = (0, 255, 0)
 ORANGE = (255, 77, 0)
 
 FONT = pygame.font.SysFont("assets/unifont.ttf", 50)
+BIG_FONT = pygame.font.SysFont("assets/unifont.ttf", 150)
 PI = math.pi
 
 DISPLAY_HEIGHT = 1000
@@ -25,6 +26,7 @@ BLOCK_HEIGHT = 50
 SPACE_COUNTER = 0
 ROW_COUNTER = 0
 LIFE_COUNTER = 3
+KILL_COUNTER = 0
 FPS = 120
 
 PLAYER = "assets/player.png"
@@ -54,4 +56,6 @@ LAYOUT = ["00000000000000000000000000000000000000000000000000",
         "00000000000000000000000000000000000000000000000000",
 
           ]
-print(len(LAYOUT[0]))
+
+
+

@@ -4,13 +4,20 @@ import random
 from settings import *
 
 class Score():
-    def __init__(self, font, display):
+    def __init__(self, font, display, score, x, y):
         self.font = font
         self.display = display
+        self.score = score
+        self.x = x
+        self.y = y
+
+    def draw_lives(self):
+        text = self.font.render(f"Lives = {self.score}", True, WHITE)
+        self.display.blit(text, (self.x, self.y))
 
     def draw_score(self):
-        text = self.font.render(f"Lives = {LIFE_COUNTER}", True, WHITE)
-        self.display.blit(text, (50, 25))
+        text = self.font.render(f"Score = {self.score}", True, WHITE)
+        self.display.blit(text, (self.x, self.y))
 
 class Life(pygame.sprite.Sprite):
     def __init__(self, x_pos, y_pos):

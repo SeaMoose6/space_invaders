@@ -6,6 +6,8 @@ from sprites import Player, Enemy, Missile, Bomb, Block, Life, Score
 
 pygame.init()
 
+
+
 screen = pygame.display.set_mode(SIZE)
 pygame.display.set_caption("Space Invaders")
 
@@ -86,6 +88,17 @@ clock = pygame.time.Clock()
 running = True
 
 while running:
+    def write_file():
+        with open('scores.txt', 'w') as high_score:
+                high_score.write(f'{KILL_COUNTER}')
+
+    def read_file():
+        with open('scores.txt') as high_score:
+            for score in high_score:
+                score = score
+            print(score)
+
+        return score
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -102,6 +115,8 @@ while running:
     enemy_kills = pygame.sprite.groupcollide(missile_group, enemy_group, True, True)
     if enemy_kills:
         enemy_kill.play()
+        KILL_COUNTER += 1
+
 
     screen.fill(BLACK)
 
@@ -111,7 +126,6 @@ while running:
     pygame.sprite.groupcollide(bomb_group, block_group, True, True)
     pygame.sprite.groupcollide(missile_group, block_group, True, True)
 
-    #print(pygame.sprite.spritecollide(player, bomb_group, True))
     life_kills = pygame.sprite.spritecollide(player, bomb_group, True)
     if life_kills:
         LIFE_COUNTER -= 1
@@ -122,16 +136,14 @@ while running:
         elif LIFE_COUNTER == 0:
             life_1.kill()
 
-    score = Score(FONT, screen)
-
-    # if str(pygame.sprite.spritecollide(player, bomb_group, True)) == '[<Bomb Sprite(in 0 groups)>]':
-    #     LIFE_COUNTER -= 1
-    #     life.kill()
+    lives = Score(FONT, screen, LIFE_COUNTER, 50, 25)
+    score = Score(FONT, screen, KILL_COUNTER, 50, 75)
 
     if len(bomb_group) < 10:
         bomb_group.add(bomb)
         all_sprites.add(bomb)
 
+    lives.draw_lives()
     score.draw_score()
 
     enemy_group.draw(screen)
@@ -141,6 +153,17 @@ while running:
     block_group.draw(screen)
     life_group.draw(screen)
     all_sprites.update()
+
+    if LIFE_COUNTER <= -1:
+        screen.fill(BLACK)
+        text = BIG_FONT.render(f"GAME OVER", True, RED)
+        screen.blit(text, (200, 400))
+
+        high_score = read_file()
+
+        if KILL_COUNTER > int(high_score):
+            write_file()
+
 
 
     pygame.display.flip()
