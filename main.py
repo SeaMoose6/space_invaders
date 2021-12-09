@@ -32,39 +32,51 @@ all_sprites.add(player)
 
 for num in range(1, 55):
     if num <= 11:
-        enemy = Enemy(num, 200, RED_ALIEN)
+        enemy = Enemy(num, 250, RED_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 10 < num <= 21:
-        enemy = Enemy(num-10, 150, RED_ALIEN)
+        enemy = Enemy(num-10, 200, RED_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 20 < num <= 31:
-        enemy = Enemy(num-20, 100, YELLOW_ALIEN)
+        enemy = Enemy(num-20, 150, YELLOW_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 30 < num <= 41:
-        enemy = Enemy(num-30, 50, YELLOW_ALIEN)
+        enemy = Enemy(num-30, 100, YELLOW_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
     if 40 < num <= 51:
-        enemy = Enemy(num-40, 0, GREEN_ALIEN)
+        enemy = Enemy(num-40, 50, GREEN_ALIEN)
         enemy_group.add(enemy)
         all_sprites.add(enemy)
+# #
+# x_offset = 30
+# y_offset = 60
+# for row in range(6):
+#     if row == 1: enemy_img = RED_ALIEN
+#     elif 1 < row < 4 : enemy_img = GREEN_ALIEN
+#     else: enemy_img = YELLOW_ALIEN
+#
+#     for col in range(11):
+#         x_pos = col*h_scale+x_offset
+#         y_pos = row+v_scale+y_offset
+#         enemy = Enemy(enemy_img, x_pos, y_pos)
+#         enemy_group.add(enemy)
 
-
-    for num in range(len(LAYOUT)):
-        for val in range(len(LAYOUT[num])):
-            if LAYOUT[num][val] == "0":
-                SPACE_COUNTER += 1
-                if SPACE_COUNTER == 50:
-                    SPACE_COUNTER = 0
-                    ROW_COUNTER += 1
-            elif LAYOUT[num][val] == "1":
-                SPACE_COUNTER += 1
-                block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER, screen)
-                block_group.add(block)
-                all_sprites.add(block)
+for num in range(len(LAYOUT)):
+    for val in range(len(LAYOUT[num])):
+        if LAYOUT[num][val] == "0":
+            SPACE_COUNTER += 1
+            if SPACE_COUNTER == 50:
+                SPACE_COUNTER = 0
+                ROW_COUNTER += 1
+        elif LAYOUT[num][val] == "1":
+            SPACE_COUNTER += 1
+            block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER, screen)
+            block_group.add(block)
+            all_sprites.add(block)
 
 
 enemy_group.add(enemy)
@@ -84,8 +96,11 @@ life_group.add(life_3)
 #     all_sprites.add(life)
 
 clock = pygame.time.Clock()
+missile_previous_fire = pygame.time.get_ticks()
 
 running = True
+
+enemy_direction = 1
 
 while running:
     def write_file():
@@ -105,10 +120,13 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
-                missile = Missile(player.rect.centerx - MISSILE_WIDTH//2, player.rect.top)
-                missile_group.add(missile)
-                all_sprites.add(missile)
-                shoot_sound.play()
+                missile_current_fire = pygame.time.get_ticks()
+                if missile_current_fire - missile_previous_fire > MISSILE_DELAY:
+                    missile_previous_fire = missile_current_fire
+                    missile = Missile(player.rect.centerx - MISSILE_WIDTH//2, player.rect.top)
+                    missile_group.add(missile)
+                    all_sprites.add(missile)
+                    shoot_sound.play()
 
 
 
@@ -116,12 +134,19 @@ while running:
     if enemy_kills:
         enemy_kill.play()
         KILL_COUNTER += 1
-
+    print(len(enemy_group))
+    # enemies = enemy_group.sprites()
+    # for enemy in enemies:
+    #     if enemy.rect.right >= DISPLAY_WIDTH:
+    #         enemy_direction = -1
+    #
+    #     elif enemy.rect.x <= 0:
+    #         enemy_direction = 1
 
     screen.fill(BLACK)
-
-    shooting_enemy = list(enemy_group)[random.randint(0, len(enemy_group)-1)]
-    bomb = Bomb(shooting_enemy.rect.x, shooting_enemy.rect.y)
+    if enemy_group:
+        shooting_enemy = list(enemy_group)[random.randint(0, len(enemy_group)-1)]
+        bomb = Bomb(shooting_enemy.rect.x, shooting_enemy.rect.y)
 
     pygame.sprite.groupcollide(bomb_group, block_group, True, True)
     pygame.sprite.groupcollide(missile_group, block_group, True, True)
@@ -136,8 +161,8 @@ while running:
         elif LIFE_COUNTER == 0:
             life_1.kill()
 
-    lives = Score(FONT, screen, LIFE_COUNTER, 50, 25)
-    score = Score(FONT, screen, KILL_COUNTER, 50, 75)
+    lives = Score(FONT, screen, LIFE_COUNTER, 250, 20)
+    score = Score(FONT, screen, KILL_COUNTER, 50, 20)
 
     if len(bomb_group) < 10:
         bomb_group.add(bomb)
@@ -157,6 +182,17 @@ while running:
     if LIFE_COUNTER <= -1:
         screen.fill(BLACK)
         text = BIG_FONT.render(f"GAME OVER", True, RED)
+        text_2 = FONT.render(f"Your score was {KILL_COUNTER}!", True, WHITE)
+        screen.blit(text, (200, 400))
+        screen.blit(text_2, (150, 600))
+
+        high_score = read_file()
+
+        if KILL_COUNTER > int(high_score):
+            write_file()
+    if len(enemy_group) == 0:
+        screen.fill(BLACK)
+        text = BIG_FONT.render(f"YOU WIN", True, GREEN)
         screen.blit(text, (200, 400))
 
         high_score = read_file()

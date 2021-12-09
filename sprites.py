@@ -83,6 +83,18 @@ class Enemy(pygame.sprite.Sprite):
             Enemy.change_x *= -1
         self.rect.y = (Enemy.y_level * self.rect.height + self.y_pos)
 
+# class Enemy(pygame.sprite.Sprite):
+#     def __init__(self, image_path, x, y):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image = pygame.image.load(image_path)
+#         self.rect = self.image.get_rect()
+#         self.rect.x = x
+#         self.rect.y = y
+#
+#     def update(self):
+#         pass
+
+
 class Missile(pygame.sprite.Sprite):
     def __init__(self, x, y):
         pygame.sprite.Sprite.__init__(self)
