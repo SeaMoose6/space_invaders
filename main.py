@@ -23,6 +23,7 @@ block_group = pygame.sprite.Group()
 enemy_group = pygame.sprite.Group()
 life_group = pygame.sprite.Group()
 bomb_group = pygame.sprite.Group()
+other_block_group = pygame.sprite.Group()
 
 player = Player("assets/player.png")
 player_group.add(player)
@@ -74,7 +75,7 @@ for num in range(len(LAYOUT)):
                 ROW_COUNTER += 1
         elif LAYOUT[num][val] == "1":
             SPACE_COUNTER += 1
-            block = Block(20*SPACE_COUNTER, 50*ROW_COUNTER, screen)
+            block = Block(20*SPACE_COUNTER, 30*ROW_COUNTER+200, screen)
             block_group.add(block)
             all_sprites.add(block)
 
@@ -88,12 +89,15 @@ life_group.add(life_1)
 life_group.add(life_2)
 life_group.add(life_3)
 
+# for row_index, row in enumerate(SHIELD):
+#     #print(row_index, row)
+#     for col_index, col in enumerate(row):
+#         if col == 'x':
+#             x_pos = col_index
+#             y_pos = row_index
+#             block = Other_Blocks(screen, x_pos, y_pos)
+#             other_block_group.add(block)
 
-
-# for num in range(LIFE_COUNTER):
-#     life = Life(num*75+30, 980)
-#     life_group.add(life)
-#     all_sprites.add(life)
 
 clock = pygame.time.Clock()
 missile_previous_fire = pygame.time.get_ticks()
@@ -111,7 +115,7 @@ while running:
         with open('scores.txt') as high_score:
             for score in high_score:
                 score = score
-            print(score)
+            #print(score)
 
         return score
 
@@ -134,7 +138,7 @@ while running:
     if enemy_kills:
         enemy_kill.play()
         KILL_COUNTER += 1
-    print(len(enemy_group))
+    #print(len(enemy_group))
     # enemies = enemy_group.sprites()
     # for enemy in enemies:
     #     if enemy.rect.right >= DISPLAY_WIDTH:
@@ -161,7 +165,7 @@ while running:
         elif LIFE_COUNTER == 0:
             life_1.kill()
 
-    lives = Score(FONT, screen, LIFE_COUNTER, 250, 20)
+    lives = Score(FONT, screen, LIFE_COUNTER, 300, 20)
     score = Score(FONT, screen, KILL_COUNTER, 50, 20)
 
     if len(bomb_group) < 10:
@@ -171,6 +175,7 @@ while running:
     lives.draw_lives()
     score.draw_score()
 
+    other_block_group.draw(screen)
     enemy_group.draw(screen)
     missile_group.draw(screen)
     player_group.draw(screen)
@@ -179,26 +184,24 @@ while running:
     life_group.draw(screen)
     all_sprites.update()
 
-    if LIFE_COUNTER <= -1:
+    if LIFE_COUNTER <= -1 or len(enemy_group) == 0:
+        high_score = read_file()
         screen.fill(BLACK)
         text = BIG_FONT.render(f"GAME OVER", True, RED)
-        text_2 = FONT.render(f"Your score was {KILL_COUNTER}!", True, WHITE)
+        text_2 = FONT.render(f"Score: {KILL_COUNTER}", True, WHITE)
+        text_3 = FONT.render(f"High score: {high_score}", True, WHITE)
+        text_4 = FONT.render(f"New High Score!", True, WHITE)
+        for missile in missile_group:
+            missile.kill()
         screen.blit(text, (200, 400))
-        screen.blit(text_2, (150, 600))
-
-        high_score = read_file()
-
+        screen.blit(text_2, (415 ,  600))
+        screen.blit(text_3, (400, 750))
+        #screen.blit(text_4, (400, 775))
         if KILL_COUNTER > int(high_score):
             write_file()
-    if len(enemy_group) == 0:
-        screen.fill(BLACK)
-        text = BIG_FONT.render(f"YOU WIN", True, GREEN)
-        screen.blit(text, (200, 400))
+            screen.blit(text_4, (400, 775))
+            print('not bugged')
 
-        high_score = read_file()
-
-        if KILL_COUNTER > int(high_score):
-            write_file()
 
 
 

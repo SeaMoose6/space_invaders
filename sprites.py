@@ -151,3 +151,12 @@ class Bomb(pygame.sprite.Sprite):
 
         if self.rect.top >= 1000:
              self.kill()
+
+# class Other_Blocks(pygame.sprite.Sprite):
+#     def __init__(self, display, x, y):
+#         pygame.sprite.Sprite.__init__(self)
+#         self.image = pygame.Surface((BLOCK_WIDTH, BLOCK_HEIGHT))
+#         self.image.fill(BLOCK_COLOR)
+#         self.rect = self.image.get_rect()
+#         self.rect.center(x, y)
+#         pygame.draw.rect(display, BLOCK_COLOR, [self.rect.x, self.rect.y, self.rect.width, self.rect.height])
