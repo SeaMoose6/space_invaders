@@ -65,11 +65,12 @@ class Enemy(pygame.sprite.Sprite):
     y_level = 0
     change_x = 1
 
-    def __init__(self, x_pos, y_pos, color):
+    def __init__(self, x_pos, y_pos, color, points):
         pygame.sprite.Sprite.__init__(self)
         self.x_pos = x_pos
         self.y_pos = y_pos
         self.color = color
+        self.points = points
         self.image = pygame.image.load(self.color)
         self.rect = self.image.get_rect()
         self.rect.center = (DISPLAY_WIDTH // 15) * self.x_pos, self.rect.height + y_pos
@@ -160,3 +161,25 @@ class Bomb(pygame.sprite.Sprite):
 #         self.rect = self.image.get_rect()
 #         self.rect.center(x, y)
 #         pygame.draw.rect(display, BLOCK_COLOR, [self.rect.x, self.rect.y, self.rect.width, self.rect.height])
+class Explosion(pygame.sprite.Sprite):
+    def __init__(self, center):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = EXPLOSION_LIST[0]
+        self.rect = self.image.get_rect()
+        self.rect.center = center
+        self.frame = 0
+        self.frame_rate = 50
+        self.kill_center = center
+        self.previous_update = pygame.time.get_ticks()
+
+    def update(self):
+        current = pygame.time.get_ticks()
+        if current - self.previous_update > self.frame_rate:
+            self.previous_update = current
+            self.frame += 1
+        if self.frame == len(EXPLOSION_LIST):
+            self.kill()
+        else:
+            self.image = EXPLOSION_LIST[self.frame]
+            self.rect = self.image.get_rect()
+            self.rect.center = self.kill_center
