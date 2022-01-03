@@ -65,12 +65,29 @@ def game_over():
             if event.type == pygame.QUIT:
                 quit()
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_RETURN:
+                if event.key == pygame.K_SPACE:
                     running = False
+        global h_score
 
+
+        h_score = read_file()
         screen.fill(BLACK)
-        pygame.display.flip()
+        text = BIG_FONT.render(f"GAME OVER", True, RED)
+        text_2 = FONT.render(f"Score: {KILL_COUNTER}", True, WHITE)
+        text_3 = FONT.render(f"High score: {h_score}", True, WHITE)
+        screen.blit(text, (200, 400))
+        screen.blit(text_2, (415, 600))
+        screen.blit(text_3, (400, 750))
+        if KILL_COUNTER >= int(h_score):
+            write_file()
+            text_4 = FONT.render(f"New High Score!", True, WHITE)
+            screen.blit(text_4, (400, 800))
 
+        start_text_3 = FONT.render("press SPACE to play again", True, WHITE)
+        screen.blit(start_text_3, (350, 700))
+
+
+        pygame.display.flip()
         clock.tick(FPS)
 
 
@@ -238,20 +255,21 @@ def play():
         global h_score
 
         if LIFE_COUNTER <= -1 or len(enemy_group) == 0:
-            h_score = read_file()
-            screen.fill(BLACK)
-            text = BIG_FONT.render(f"GAME OVER", True, RED)
-            text_2 = FONT.render(f"Score: {KILL_COUNTER}", True, WHITE)
-            text_3 = FONT.render(f"High score: {h_score}", True, WHITE)
-            for missile in missile_group:
-                missile.kill()
-            screen.blit(text, (200, 400))
-            screen.blit(text_2, (415, 600))
-            screen.blit(text_3, (400, 750))
-            if KILL_COUNTER >= int(h_score):
-                write_file()
-                text_4 = FONT.render(f"New High Score!", True, WHITE)
-                screen.blit(text_4, (400, 800))
+            running = False
+            # h_score = read_file()
+            # screen.fill(BLACK)
+            # text = BIG_FONT.render(f"GAME OVER", True, RED)
+            # text_2 = FONT.render(f"Score: {KILL_COUNTER}", True, WHITE)
+            # text_3 = FONT.render(f"High score: {h_score}", True, WHITE)
+            # for missile in missile_group:
+            #     missile.kill()
+            # screen.blit(text, (200, 400))
+            # screen.blit(text_2, (415, 600))
+            # screen.blit(text_3, (400, 750))
+            # if KILL_COUNTER >= int(h_score):
+            #     write_file()
+            #     text_4 = FONT.render(f"New High Score!", True, WHITE)
+            #     screen.blit(text_4, (400, 800))
 
         pygame.display.flip()
 
